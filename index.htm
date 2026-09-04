@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MEAL(지옥에서 누가 돌아왔조)</title>
+  <style>
+    :root {
+      --bg: #fffaf4;
+      --paper: #ffffff;
+      --text: #2e241f;
+      --muted: #7f6f66;
+      --line: #f1ded0;
+      --yellow: #ffd45a;
+      --orange: #ff9d4d;
+      --red: #e85c4a;
+      --deep-red: #b94235;
+      --shadow: 0 12px 30px rgba(126, 76, 48, 0.10);
+      --shadow-small: 0 6px 14px rgba(126, 76, 48, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255, 212, 90, 0.22), transparent 32%),
+        radial-gradient(circle at 90% 12%, rgba(232, 92, 74, 0.12), transparent 28%),
+        var(--bg);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      width: min(960px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 56px 0 72px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 34px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: #fff0c4;
+      color: #8b5d00;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      max-width: 640px;
+      margin: 14px auto 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .category-list {
+      display: grid;
+      gap: 22px;
+    }
+
+    .category-card {
+      background: rgba(255,255,255,0.93);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .category-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .category-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--yellow), var(--red));
+      box-shadow: 0 0 0 5px rgba(255, 212, 90, 0.18);
+      flex: 0 0 auto;
+    }
+
+    .category-title {
+      margin: 0;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .question-box {
+      border: 1px solid #f3e7dd;
+      border-radius: 16px;
+      padding: 18px;
+      background: #fffdfb;
+    }
+
+    .question-text {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .score-btn {
+      border: 1px solid #ead6c6;
+      border-bottom-width: 3px;
+      border-radius: 12px;
+      padding: 11px 4px 9px;
+      background: #ffffff;
+      color: #5d4b42;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease,
+                  color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .score-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--orange);
+      box-shadow: var(--shadow-small);
+    }
+
+    .score-btn.selected {
+      background: linear-gradient(180deg, #ffd969, #ffb14e);
+      border-color: #e08a35;
+      color: #4f2d00;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), var(--shadow-small);
+      transform: translateY(-1px);
+    }
+
+    .scale-guide {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 9px;
+      color: #9a8a81;
+      font-size: 0.75rem;
+    }
+
+    .action-area {
+      margin-top: 28px;
+      text-align: center;
+    }
+
+    .recommend-btn {
+      width: min(420px, 100%);
+      border: 0;
+      border-bottom: 4px solid #a93b30;
+      border-radius: 15px;
+      padding: 15px 22px 13px;
+      background: linear-gradient(135deg, var(--orange), var(--red));
+      color: white;
+      font-weight: 900;
+      font-size: 1.05rem;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(201, 76, 59, 0.20);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .recommend-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(201, 76, 59, 0.25);
+    }
+
+    .recommend-btn:active {
+      transform: translateY(1px);
+      border-bottom-width: 2px;
+      margin-top: 2px;
+    }
+
+    .recommend-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .status {
+      min-height: 24px;
+      margin: 12px 0 0;
+      color: var(--deep-red);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .results {
+      display: none;
+      margin-top: 42px;
+      scroll-margin-top: 24px;
+    }
+
+    .results.show {
+      display: block;
+    }
+
+    .results-head {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .results-head h2 {
+      margin: 0;
+      font-size: 1.7rem;
+      letter-spacing: -0.03em;
+    }
+
+    .results-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .result-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 178px;
+      padding: 24px 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: white;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .result-card:first-child {
+      transform: translateY(-6px);
+      border-color: #f1c150;
+    }
+
+    .rank {
+      display: inline-grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      margin-bottom: 14px;
+      border-radius: 50%;
+      background: #fff1c6;
+      color: #8c5a00;
+      font-weight: 900;
+    }
+
+    .result-card:first-child .rank {
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
+      color: #4d2b00;
+    }
+
+    .menu-name {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .similarity {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .reset-btn {
+      margin-top: 18px;
+      border: 1px solid #e6d2c4;
+      border-radius: 12px;
+      padding: 10px 16px;
+      background: white;
+      color: #67554c;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .error-box {
+      padding: 18px;
+      border: 1px solid #efb6af;
+      border-radius: 14px;
+      background: #fff5f3;
+      color: #8f3026;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        width: min(100% - 22px, 960px);
+        padding-top: 34px;
+      }
+
+      .category-card {
+        padding: 18px 14px;
+        border-radius: 18px;
+      }
+
+      .question-box {
+        padding: 15px 12px;
+      }
+
+      .score-row {
+        gap: 6px;
+      }
+
+      .score-btn {
+        padding: 10px 2px 8px;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-card:first-child {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="eyebrow">오늘 뭐 먹지?</div>
+      <h1>MEAL(지옥에서 누가 돌아왔조)</h1>
+      <p>오늘의 기분, 함께하는 사람, 맛 선호도를 1~5점으로 선택하면 가장 잘 어울리는 메뉴 3개를 추천합니다.</p>
+    </header>
+
+    <section id="questionArea" class="category-list" aria-live="polite"></section>
+
+    <div class="action-area">
+      <button id="recommendBtn" class="recommend-btn" type="button" disabled>
+        메뉴 추천받기
+      </button>
+      <p id="status" class="status"></p>
+    </div>
+
+    <section id="results" class="results">
+      <div class="results-head">
+        <h2>오늘의 추천 메뉴</h2>
+        <p>입력한 답변과 메뉴 특성의 코사인 유사도를 기준으로 정렬했습니다.</p>
+      </div>
+      <div id="resultGrid" class="result-grid"></div>
+      <div style="text-align:center">
+        <button id="resetBtn" class="reset-btn" type="button">다시 선택하기</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const QUESTION_FILE = "data/질문.csv";
+    const ITEM_FILE = "data/item.csv";
+
+    // 질문.csv의 8개 질문이 item.csv의 아래 8개 점수 항목과 순서대로 대응됩니다.
+    const FEATURE_ORDER = [
+      "스트레스",
+      "기쁨",
+      "친구",
+      "어색한 사이",
+      "연인",
+      "매콤",
+      "담백",
+      "느끼"
+    ];
+
+    let questions = [];
+    let items = [];
+    let answers = [];
+
+    const questionArea = document.getElementById("questionArea");
+    const recommendBtn = document.getElementById("recommendBtn");
+    const statusEl = document.getElementById("status");
+    const resultsEl = document.getElementById("results");
+    const resultGrid = document.getElementById("resultGrid");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let field = "";
+      let inQuotes = false;
+
+      text = text.replace(/^\uFEFF/, "");
+
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const next = text[i + 1];
+
+        if (ch === '"') {
+          if (inQuotes && next === '"') {
+            field += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === "," && !inQuotes) {
+          row.push(field.trim());
+          field = "";
+        } else if ((ch === "\n" || ch === "\r") && !inQuotes) {
+          if (ch === "\r" && next === "\n") i++;
+          row.push(field.trim());
+          field = "";
+
+          if (row.some(cell => cell !== "")) rows.push(row);
+          row = [];
+        } else {
+          field += ch;
+        }
+      }
+
+      if (field.length > 0 || row.length > 0) {
+        row.push(field.trim());
+        if (row.some(cell => cell !== "")) rows.push(row);
+      }
+
+      return rows;
+    }
+
+    async function fetchText(path) {
+      const response = await fetch(path);
+      if (!response.ok) {
+        throw new Error(`${path} 파일을 불러오지 못했습니다.`);
+      }
+      return response.text();
+    }
+
+    function loadQuestions(csvText) {
+      const rows = parseCSV(csvText);
+
+      return rows.map((row, index) => ({
+        text: (row[0] || "").trim(),
+        category: (row[1] || "기타").trim(),
+        feature: FEATURE_ORDER[index]
+      })).filter(q => q.text);
+    }
+
+    function loadItems(csvText) {
+      const rows = parseCSV(csvText);
+      if (rows.length < 2) throw new Error("item.csv에 추천 데이터가 없습니다.");
+
+      const headers = rows[0].map(h => h.trim());
+      const itemIndex = headers.findIndex(h => h.toLowerCase() === "item");
+      const featureIndexes = FEATURE_ORDER.map(feature => headers.indexOf(feature));
+
+      if (itemIndex === -1 || featureIndexes.some(index => index === -1)) {
+        throw new Error("item.csv의 항목명이 예상한 구조와 다릅니다.");
+      }
+
+      return rows.slice(1).map(row => {
+        const name = (row[itemIndex] || "").trim();
+        const vector = featureIndexes.map(index => Number(row[index]));
+
+        if (!name || vector.some(value => !Number.isFinite(value))) return null;
+        return { name, vector };
+      }).filter(Boolean);
+    }
+
+    function groupByCategory(questionList) {
+      const groups = [];
+      const map = new Map();
+
+      questionList.forEach((question, index) => {
+        if (!map.has(question.category)) {
+          const group = { category: question.category, questions: [] };
+          map.set(question.category, group);
+          groups.push(group);
+        }
+        map.get(question.category).questions.push({ ...question, index });
+      });
+
+      return groups;
+    }
+
+    function renderQuestions() {
+      questionArea.innerHTML = "";
+      const groups = groupByCategory(questions);
+
+      groups.forEach(group => {
+        const card = document.createElement("section");
+        card.className = "category-card";
+
+        const head = document.createElement("div");
+        head.className = "category-head";
+        head.innerHTML = `
+          <span class="category-dot" aria-hidden="true"></span>
+          <h2 class="category-title">${escapeHTML(group.category)}</h2>
+        `;
+        card.appendChild(head);
+
+        const list = document.createElement("div");
+        list.className = "question-list";
+
+        group.questions.forEach(question => {
+          const box = document.createElement("div");
+          box.className = "question-box";
+
+          const questionText = document.createElement("p");
+          questionText.className = "question-text";
+          questionText.textContent = question.text;
+          box.appendChild(questionText);
+
+          const scoreRow = document.createElement("div");
+          scoreRow.className = "score-row";
+          scoreRow.setAttribute("role", "group");
+          scoreRow.setAttribute("aria-label", `${question.text} 점수 선택`);
+
+          for (let score = 1; score <= 5; score++) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "score-btn";
+            button.textContent = score;
+            button.dataset.questionIndex = question.index;
+            button.dataset.score = score;
+
+            button.addEventListener("click", () => {
+              answers[question.index] = score;
+
+              scoreRow.querySelectorAll(".score-btn").forEach(btn => {
+                btn.classList.toggle(
+                  "selected",
+                  Number(btn.dataset.score) === score
+                );
+              });
+
+              updateReadyState();
+            });
+
+            scoreRow.appendChild(button);
+          }
+
+          box.appendChild(scoreRow);
+
+          const guide = document.createElement("div");
+          guide.className = "scale-guide";
+          guide.innerHTML = "<span>1 · 전혀 아니다</span><span>5 · 매우 그렇다</span>";
+          box.appendChild(guide);
+
+          list.appendChild(box);
+        });
+
+        card.appendChild(list);
+        questionArea.appendChild(card);
+      });
+    }
+
+    function updateReadyState() {
+      const completed = answers.filter(value => Number.isFinite(value)).length;
+      const total = questions.length;
+      recommendBtn.disabled = completed !== total;
+
+      if (completed === total) {
+        statusEl.textContent = "모든 질문에 답했습니다.";
+      } else {
+        statusEl.textContent = `남은 질문 ${total - completed}개`;
+      }
+    }
+
+    function cosineSimilarity(a, b) {
+      let dot = 0;
+      let normA = 0;
+      let normB = 0;
+
+      for (let i = 0; i < a.length; i++) {
+        dot += a[i] * b[i];
+        normA += a[i] * a[i];
+        normB += b[i] * b[i];
+      }
+
+      if (normA === 0 || normB === 0) return 0;
+      return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
+    function recommend() {
+      if (answers.length !== questions.length ||
+          answers.some(value => !Number.isFinite(value))) {
+        statusEl.textContent = "모든 질문에 1~5점으로 답해주세요.";
+        return;
+      }
+
+      const ranked = items
+        .map(item => ({
+          ...item,
+          similarity: cosineSimilarity(answers, item.vector)
+        }))
+        .sort((a, b) => b.similarity - a.similarity)
+        .slice(0, 3);
+
+      resultGrid.innerHTML = "";
+
+      ranked.forEach((item, index) => {
+        const card = document.createElement("article");
+        card.className = "result-card";
+
+        const percent = (item.similarity * 100).toFixed(1);
+
+        card.innerHTML = `
+          <div class="rank">${index + 1}</div>
+          <h3 class="menu-name">${escapeHTML(item.name)}</h3>
+          <p class="similarity">코사인 유사도 ${percent}%</p>
+        `;
+
+        resultGrid.appendChild(card);
+      });
+
+      resultsEl.classList.add("show");
+      statusEl.textContent = "";
+      resultsEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function resetAll() {
+      answers = new Array(questions.length).fill(null);
+      document.querySelectorAll(".score-btn.selected").forEach(btn => {
+        btn.classList.remove("selected");
+      });
+
+      resultsEl.classList.remove("show");
+      resultGrid.innerHTML = "";
+      updateReadyState();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function init() {
+      try {
+        const [questionText, itemText] = await Promise.all([
+          fetchText(QUESTION_FILE),
+          fetchText(ITEM_FILE)
+        ]);
+
+        questions = loadQuestions(questionText);
+        items = loadItems(itemText);
+
+        if (questions.length !== FEATURE_ORDER.length) {
+          throw new Error(
+            `질문.csv에는 ${FEATURE_ORDER.length}개의 질문이 있어야 합니다. 현재 ${questions.length}개입니다.`
+          );
+        }
+
+        answers = new Array(questions.length).fill(null);
+        renderQuestions();
+        updateReadyState();
+      } catch (error) {
+        console.error(error);
+        questionArea.innerHTML = `
+          <div class="error-box">
+            <strong>데이터를 불러오지 못했습니다.</strong><br>
+            GitHub의 <code>data/</code> 폴더 안에
+            <code>질문.csv</code>와 <code>item.csv</code>가 있는지 확인해주세요.<br>
+            ${escapeHTML(error.message)}
+          </div>
+        `;
+        statusEl.textContent = "";
+        recommendBtn.disabled = true;
+      }
+    }
+
+    recommendBtn.addEventListener("click", recommend);
+    resetBtn.addEventListener("click", resetAll);
+
+    init();
+  </script>
+</body>
+</html>
