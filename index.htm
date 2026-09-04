@@ -622,12 +622,12 @@
         const card = document.createElement("article");
         card.className = "result-card";
 
-        const percent = item.similarity.toFixed(3);
+        const similarity = item.similarity.toFixed(3);
 
         card.innerHTML = `
           <div class="rank">${index + 1}</div>
           <h3 class="menu-name">${escapeHTML(item.name)}</h3>
-          <p class="similarity">코사인 유사도 ${similarity}%</p>
+          <p class="similarity">코사인 유사도 ${similarity}</p>
         `;
 
         resultGrid.appendChild(card);
